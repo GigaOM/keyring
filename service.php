@@ -236,7 +236,7 @@ abstract class Keyring_Service {
 			return apply_filters( 'keyring_credentials', $creds, $this->get_name() );
 		}
 
-		return false;
+		return apply_filters( 'keyring_credentials', false, $this->get_name() );
 	}
 
 	/**
