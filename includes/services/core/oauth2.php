@@ -25,6 +25,11 @@ class Keyring_Service_OAuth2 extends Keyring_Service_OAuth1 {
 	 */
 	var $authorization_parameter = 'oauth_token';
 
+	function __construct() {
+		parent::__construct();
+		$this->callback_url = apply_filters( 'keyring_callback_url', $this->callback_url, $this->get_name() );
+	}
+
 	function request_token() {
 		Keyring_Util::debug( 'Keyring_Service_OAuth2::request_token()' );
 		if ( !isset( $_REQUEST['nonce'] ) || !wp_verify_nonce( $_REQUEST['nonce'], 'keyring-request-' . $this->get_name() ) ) {
