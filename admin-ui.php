@@ -99,7 +99,7 @@ class Keyring_Admin_UI {
 				exit;
 			}
 
-			if ( $this->keyring->get_token_store()->delete( array( 'id' => (int) $_REQUEST['token'], 'type' => 'access' ) ) )
+			if ( $this->keyring->get_token_store()->delete( array( 'id' => $_REQUEST['token'], 'type' => 'access' ) ) )
 				Keyring::message( __( 'That connection has been deleted.', 'keyring' ) );
 			else
 				Keyring::message( __( 'Could not delete that connection!', 'keyring' ) );

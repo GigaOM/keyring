@@ -251,15 +251,15 @@ class Keyring_Util {
 	 * @return URL to Keyring admin UI (main listing, or specific service verify process)
 	 */
 	static function admin_url( $service = false, $params = array() ) {
-		$url = apply_filters( 'keyring_admin_url', admin_url( '' ) );
+		$url = admin_url();
 
 		if ( $service )
 			$url = add_query_arg( array( 'service' => $service ), $url );
 
 		if ( count( $params ) )
 			$url = add_query_arg( $params, $url );
-
-		return $url;
+		
+		return apply_filters( 'keyring_admin_url', $url, $service, $params );
 	}
 
 	static function connect_to( $service, $for ) {
