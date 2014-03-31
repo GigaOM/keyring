@@ -45,9 +45,10 @@ class Keyring {
 			require_once dirname( __FILE__ ) . '/admin-ui.php';
 			Keyring_Admin_UI::init();
 
-			add_filter( 'keyring_admin_url', function( $url ) {
-				return admin_url( 'tools.php?page=' . Keyring::init()->admin_page );
-			} );
+			add_filter( 'keyring_admin_url', function( $url, $params ) {
+				$url = admin_url( 'tools.php?page=' . Keyring::init()->admin_page );
+				return add_query_arg( $params, $url );
+			}, 10, 2 );
 		}
 
 		// This is used internally to create URLs, and also to know when to
@@ -251,15 +252,15 @@ class Keyring_Util {
 	 * @return URL to Keyring admin UI (main listing, or specific service verify process)
 	 */
 	static function admin_url( $service = false, $params = array() ) {
-		$url = apply_filters( 'keyring_admin_url', admin_url( '' ) );
+		$url = admin_url();
 
 		if ( $service )
-			$url = add_query_arg( array( 'service' => $service ), $url );
+			$params['service'] = $service;
 
 		if ( count( $params ) )
 			$url = add_query_arg( $params, $url );
 
-		return $url;
+		return apply_filters( 'keyring_admin_url', $url, $params );
 	}
 
 	static function connect_to( $service, $for ) {
