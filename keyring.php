@@ -39,6 +39,7 @@ class Keyring {
 	protected $errors              = array();
 	protected $messages            = array();
 	protected $token_store         = '';
+
 	var $admin_page                = 'keyring';
 
 	function __construct() {
