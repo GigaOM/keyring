@@ -3,7 +3,7 @@
 Plugin Name: Keyring
 Plugin URI: http://dentedreality.com.au/projects/wp-keyring/
 Description: Keyring helps you manage your keys. It provides a generic, very hookable framework for connecting to remote systems and managing your access tokens, username/password combos etc for those services. On its own it doesn't do much, but it enables other plugins to do things that require authorization to act on your behalf.
-Version: 1.5.1
+Version: 1.6
 Author: Beau Lebens
 Author URI: http://dentedreality.com.au
 */
@@ -25,7 +25,7 @@ define( 'KEYRING__DEBUG_WARN',   2 );
 define( 'KEYRING__DEBUG_ERROR',  3 );
 
 // Indicates Keyring is installed/active so that other plugins can detect it
-define( 'KEYRING__VERSION', '1.5.1' );
+define( 'KEYRING__VERSION', '1.6' );
 
 /**
  * Core Keyring class that handles UI and the general flow of requesting access tokens etc
@@ -38,7 +38,8 @@ class Keyring {
 	protected $store               = false;
 	protected $errors              = array();
 	protected $messages            = array();
-	protected $keyring_token_store = false;
+	protected $token_store         = '';
+
 	var $admin_page                = 'keyring';
 
 	function __construct() {
@@ -85,8 +86,8 @@ class Keyring {
 		require_once dirname( __FILE__ ) . '/store.php';
 		do_action( 'keyring_load_token_stores' );
 		$keyring = Keyring::init();
-		$keyring->keyring_token_store = apply_filters( 'keyring_token_store', defined( 'KEYRING__TOKEN_STORE' ) ? KEYRING__TOKEN_STORE : FALSE );
-		if ( !$keyring->keyring_token_store || !class_exists( $keyring->keyring_token_store ) || !in_array( 'Keyring_Store', class_parents( $keyring->keyring_token_store ) ) )
+		$keyring->token_store = apply_filters( 'keyring_token_store', defined( 'KEYRING__TOKEN_STORE' ) ? KEYRING__TOKEN_STORE : false );
+		if ( !class_exists( $keyring->token_store ) || !in_array( 'Keyring_Store', class_parents( $keyring->token_store ) ) )
 			wp_die( sprintf( __( 'Invalid <code>KEYRING__TOKEN_STORE</code> specified. Please make sure <code>KEYRING__TOKEN_STORE</code> is set to a valid classname for handling token storage in <code>%s</code> (or <code>wp-config.php</code>)', 'keyring' ), __FILE__ ) );
 
 		// Load base token and service definitions + core services
@@ -177,7 +178,7 @@ class Keyring {
 		$keyring = Keyring::init();
 
 		if ( !$keyring->store )
-			$keyring->store = call_user_func( array( $keyring->keyring_token_store, 'init' ) );
+			$keyring->store = call_user_func( array( $keyring->token_store, 'init' ) );
 
 		return $keyring->store;
 	}
